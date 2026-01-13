@@ -1,23 +1,48 @@
-import { Upload, ImageDown, Save } from 'lucide-react';
+import { Upload, ImageDown, Save, ChevronLeft } from 'lucide-react';
 import { useFileHandlers } from '../../hooks/useFileHandlers';
+import { useProjectStore } from '../../store/useProjectStore';
 import { useRef } from 'react';
 
+import { useCanvasStore } from '../../store/useCanvasStore';
+
 export const Header = () => {
-    const { saveToFile, loadFromFile, exportImage } = useFileHandlers();
+    const { loadFromFile, exportImage } = useFileHandlers();
+    const { currentProjectName, updateProjectName, exitProject, saveProject } = useProjectStore();
+    const { canvas } = useCanvasStore(); // Need access to canvas for saving
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleSave = () => {
+        if (canvas) {
+            saveProject(canvas);
+        }
+    };
 
     return (
         <div className="h-14 bg-white border-b border-gray-200 px-4 flex items-center justify-between z-10 relative">
-            <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">
-                    IE
+            <div className="flex items-center gap-3">
+                <button
+                    onClick={exitProject}
+                    className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 hover:text-gray-900 transition-colors"
+                    title="Back to Dashboard"
+                >
+                    <ChevronLeft size={20} />
+                </button>
+                <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">
+                        IE
+                    </div>
+                    <input
+                        type="text"
+                        value={currentProjectName}
+                        onChange={(e) => updateProjectName(e.target.value)}
+                        className="font-semibold text-gray-800 hover:bg-gray-50 focus:bg-white border border-transparent focus:border-blue-500 rounded px-2 py-1 outline-none transition-all"
+                    />
                 </div>
-                <h1 className="font-semibold text-gray-800">Untitled Drawing</h1>
             </div>
 
             <div className="flex items-center gap-2">
                 <button
-                    onClick={saveToFile}
+                    onClick={handleSave}
                     className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
                 >
                     <Save size={18} />

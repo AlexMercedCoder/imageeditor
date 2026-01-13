@@ -1,1 +1,0 @@
-src/hooks/useCanvasEvents.ts(3,32): error TS2307: Cannot find module '../../store/useCanvasStore' or its corresponding type declarations.
