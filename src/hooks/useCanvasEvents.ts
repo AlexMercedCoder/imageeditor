@@ -155,8 +155,50 @@ export const useCanvasEvents = () => {
             canvas.requestRenderAll();
         };
 
-        const handleMouseUp = () => {
+        const handleMouseUp = (opt: any) => {
             if (isDrawing.current) {
+                // Line Snapping Logic
+                if (activeTool === 'line' && activeObject.current) {
+                    const line = activeObject.current;
+                    const objects = canvas.getObjects();
+                    const pointer = canvas.getScenePoint(opt.e);
+
+                    // Helper to check if point is inside object (very basic bbox check)
+                    const findTargetAt = (point: { x: number, y: number }) => {
+                        // Reverse iterate to find top-most object, skipping the line itself
+                        for (let i = objects.length - 1; i >= 0; i--) {
+                            const obj = objects[i];
+                            if (obj === line) continue;
+                            if (obj.containsPoint(point)) return obj;
+                        }
+                        return null;
+                    };
+
+                    const startObj = findTargetAt(startPos.current);
+                    const endObj = findTargetAt(pointer);
+
+                    if (startObj) {
+                        line.set({
+                            x1: startObj.left,
+                            y1: startObj.top,
+                            startObject: startObj
+                        });
+                    }
+
+                    if (endObj) {
+                        line.set({
+                            x2: endObj.left,
+                            y2: endObj.top,
+                            endObject: endObj
+                        });
+                    }
+
+                    if (startObj || endObj) {
+                        line.setCoords();
+                        canvas.requestRenderAll();
+                    }
+                }
+
                 isDrawing.current = false;
                 activeObject.current = null;
                 canvas.selection = true;

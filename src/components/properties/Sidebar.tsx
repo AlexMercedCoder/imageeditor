@@ -22,6 +22,27 @@ export const Sidebar = () => {
         canvas.discardActiveObject();
         canvas.requestRenderAll();
     };
+
+    const groupObjects = () => {
+        if (!canvas) return;
+        const activeObj = canvas.getActiveObject();
+        if (!activeObj || activeObj.type !== 'activeSelection') return;
+
+        activeObj.toGroup();
+        canvas.requestRenderAll();
+        // Force update to refresh UI (buttons might change state)
+        forceUpdate((n) => n + 1);
+    };
+
+    const ungroupObjects = () => {
+        if (!canvas) return;
+        const activeObj = canvas.getActiveObject();
+        if (!activeObj || activeObj.type !== 'group') return;
+
+        activeObj.toActiveSelection();
+        canvas.requestRenderAll();
+        forceUpdate((n) => n + 1);
+    };
     // ...
     return (
         <div className="w-80 bg-white/90 backdrop-blur-sm border-l border-gray-200/50 shadow-xl z-10 flex flex-col h-full">
@@ -167,6 +188,28 @@ export const Sidebar = () => {
                                         onChange={(e) => updateProperty('opacity', parseFloat(e.target.value))}
                                     />
                                 </div>
+
+                                {selectedObjects.length > 1 && (
+                                    <div className="pt-4 border-t border-gray-100">
+                                        <button
+                                            onClick={groupObjects}
+                                            className="w-full py-2 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center gap-2 text-sm hover:bg-blue-100 transition-colors"
+                                        >
+                                            <Layers size={16} /> Group Objects
+                                        </button>
+                                    </div>
+                                )}
+
+                                {selectedObjects.length === 1 && selectedObjects[0].type === 'group' && (
+                                    <div className="pt-4 border-t border-gray-100">
+                                        <button
+                                            onClick={ungroupObjects}
+                                            className="w-full py-2 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center gap-2 text-sm hover:bg-blue-100 transition-colors"
+                                        >
+                                            <Layers size={16} /> Ungroup
+                                        </button>
+                                    </div>
+                                )}
 
                                 <div className="pt-4 border-t border-gray-100">
                                     <button

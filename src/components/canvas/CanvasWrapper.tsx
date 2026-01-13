@@ -6,6 +6,7 @@ import { useCanvasHotkeys } from '../../hooks/useCanvasHotkeys';
 import { useCanvasImages } from '../../hooks/useCanvasImages';
 import { useSelection } from '../../hooks/useSelection';
 import { useObjectObserver } from '../../hooks/useObjectObserver';
+import { useCanvasConnectors } from '../../hooks/useCanvasConnectors';
 
 export const CanvasWrapper = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -17,6 +18,7 @@ export const CanvasWrapper = () => {
     useCanvasImages();
     useSelection();
     useObjectObserver();
+    useCanvasConnectors();
 
     useEffect(() => {
         if (!canvasRef.current || !containerRef.current) return;
